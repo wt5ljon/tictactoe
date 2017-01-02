@@ -38,6 +38,35 @@ class Board
 		end
 	end
 
+	def win?(s)
+		if @board["TL"] == s && @board["TM"] == s &&  @board["TR"] == s
+			return true
+		elsif @board["ML"] == s && @board["MM"] == s && @board["MR"] == s
+			return true
+		elsif @board["BL"] == s && @board["BM"] == s && @board["BR"] == s
+			return true
+		elsif @board["TL"] == s && @board["ML"] == s && @board["BL"] == s
+			return true
+		elsif @board["TM"] == s && @board["MM"] == s && @board["BM"] == s
+			return true
+		elsif @board["TR"] == s && @board["MR"] == s && @board["BR"] == s
+			return true
+		elsif @board["TL"] == s && @board["MM"] == s && @board["BR"] == s
+			return true
+		elsif @board["TR"] == s && @board["MM"] == s && @board["BL"] == s
+			return true
+		else
+			return false
+		end
+	end
+
+	def valid_position?(position)
+		return @board.keys.include?(position)
+	end
+
+	def occupied?(position)
+		return @board[position] == "X" || @board[position] == "O"
+	end
 end
 
 class Player
@@ -55,7 +84,7 @@ class Game
 		@board = Board.new
 	end
 
-	def start
+	def play 
 		current_player = @player1
 		current_symbol = "X"
 		win = false
@@ -64,7 +93,7 @@ class Game
 			position = get_user_input(current_player)
 			@board.set_board(position, current_symbol)
 			@board.display_board
-			win = win?(@board.get_board, current_symbol)
+			win = @board.win?(current_symbol)
 			if win
 				puts " *** #{current_player.name} Wins!! - Game Over! ***"
 				puts ""
@@ -87,11 +116,10 @@ class Game
 
 	private
 	def get_user_input(current_player)
-		valid_positions = [ "TL", "TM", "TR", "ML", "MM", "MR", "BL", "BM", "BR" ]
 		while true
 			print "  #{current_player.name}'s Turn: "
 			position = gets.chomp.upcase
-			if not valid_positions.include?(position)
+			if not @board.valid_position?(position)
 				puts ""
 				puts "  Valid Entries: "
 				puts "  TL (Top Left)   \tTM (Top Middle)   \tTR (Top Right)"
@@ -99,36 +127,19 @@ class Game
 				puts "  BL (Bottom Left)\tBM (Bottom Middle)\tBR (Bottom Right)"
 				puts ""
 			else
-				break
+				if @board.occupied?(position)
+					puts ""
+					puts "  Position is occupied - Try Again "
+					puts ""
+				else
+					break
+				end
 			end	
 		end
 		return position
 	end
-
-	def win?(board, s)
-		if board["TL"] == s && board["TM"] == s &&  board["TR"] == s
-			return true
-		elsif board["ML"] == s && board["MM"] == s && board["MR"] == s
-			return true
-		elsif board["BL"] == s && board["BM"] == s && board["BR"] == s
-			return true
-		elsif board["TL"] == s && board["ML"] == s && board["BL"] == s
-			return true
-		elsif board["TM"] == s && board["MM"] == s && board["BM"] == s
-			return true
-		elsif board["TR"] == s && board["MR"] == s && board["BR"] == s
-			return true
-		elsif board["TL"] == s && board["MM"] == s && board["BR"] == s
-			return true
-		elsif board["TR"] == s && board["MM"] == s && board["BL"] == s
-			return true
-		else
-			return false
-		end
-	end
-
 end
 
 game = Game.new("Tom", "Harry")
-game.start
+game.play
 
