@@ -1,3 +1,4 @@
+# Ruby implementation of tic-tac-toe
 class Board
 	def initialize
 		@board = { "TL"=>" ", "TM"=>" ", "TR"=>" ",
@@ -13,6 +14,8 @@ class Board
 		@board
 	end
 
+	# display entry key if start is true
+	# if start is false, display normal game grid
 	def display_board(start=false)
 		if start
 			puts ""
@@ -31,13 +34,15 @@ class Board
 			puts "   #{@board['BL']} | #{@board['BM']} | #{@board['BR']} "
 			puts ""
 		end
-
-		def draw?
-			entries = @board.select { |k,v| v != " " }
-			return entries.length == 9
-		end
 	end
 
+	# draw? is true when all squares have been filled with X or O
+	def draw?
+		entries = @board.select { |k,v| v != " " }
+		return entries.length == 9
+	end
+
+	# check for winning combinations
 	def win?(s)
 		if @board["TL"] == s && @board["TM"] == s &&  @board["TR"] == s
 			return true
@@ -60,10 +65,12 @@ class Board
 		end
 	end
 
-	def valid_position?(position)
+	# check for a valid entry
+	def valid_entry?(position)
 		return @board.keys.include?(position)
 	end
 
+	# check for a square that has already been filled
 	def occupied?(position)
 		return @board[position] == "X" || @board[position] == "O"
 	end
@@ -89,6 +96,8 @@ class Game
 		current_symbol = "X"
 		win = false
 		@board.display_board(true)
+		
+		# enter play loop
 		while !win
 			position = get_user_input(current_player)
 			@board.set_board(position, current_symbol)
@@ -103,6 +112,7 @@ class Game
 					puts ""
 					break
 				end
+				# swap player and symbol if play continues
 				if current_player == @player1
 					current_player = @player2
 					current_symbol = "O"
@@ -115,11 +125,13 @@ class Game
 	end
 
 	private
+
+	# receives and validates user input
 	def get_user_input(current_player)
 		while true
 			print "  #{current_player.name}'s Turn: "
 			position = gets.chomp.upcase
-			if not @board.valid_position?(position)
+			if not @board.valid_entry?(position)
 				puts ""
 				puts "  Valid Entries: "
 				puts "  TL (Top Left)   \tTM (Top Middle)   \tTR (Top Right)"
@@ -138,6 +150,7 @@ class Game
 		end
 		return position
 	end
+
 end
 
 game = Game.new("Tom", "Harry")
